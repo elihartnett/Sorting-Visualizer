@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@main
+ @main
 struct SortingVisualizerApp: App {
     var body: some Scene {
         WindowGroup {

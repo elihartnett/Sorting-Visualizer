@@ -22,6 +22,17 @@ class SortModel: ObservableObject {
         chartData.append(Series(sortMethod: "Selection Sort", data: (inputSize: size, time: timeInterval)))
     }
     
+    func runInsertionSort(array: inout [Int], size: Int) {
+        let start = DispatchTime.now()
+        
+        insertionSort(array: &array, low: 0, high: array.count - 1)
+        
+        let finish = DispatchTime.now()
+        let timeInterval = Int(finish.uptimeNanoseconds - start.uptimeNanoseconds)
+        
+        chartData.append(Series(sortMethod: "Insertion Sort", data: (inputSize: size, time: timeInterval)))
+    }
+    
     func runQuickSort(array: inout [Int], size: Int) {
         let start = DispatchTime.now()
         
@@ -31,6 +42,17 @@ class SortModel: ObservableObject {
         let timeInterval = Int(finish.uptimeNanoseconds - start.uptimeNanoseconds)
         
         chartData.append(Series(sortMethod: "Quick Sort", data: (inputSize: size, time: timeInterval)))
+    }
+    
+    func runHybridSort(array: inout [Int], size: Int) {
+        let start = DispatchTime.now()
+        
+        let _ = hybridSort(array: &array, low: 0, high: array.count - 1)
+        
+        let finish = DispatchTime.now()
+        let timeInterval = Int(finish.uptimeNanoseconds - start.uptimeNanoseconds)
+        
+        chartData.append(Series(sortMethod: "Hybrid Sort", data: (inputSize: size, time: timeInterval)))
     }
     
     func createRandomArrayOfInts(size: Int) -> [Int] {
@@ -55,6 +77,20 @@ class SortModel: ObservableObject {
             }
             
             (array[index], array[minIndex]) = (array[minIndex], array[index])
+        }
+    }
+    
+    func insertionSort(array: inout [Int], low: Int, high: Int) {
+        let size = array.count
+        
+        for index in low..<high {
+            let key = array[index]
+            var j = index - 1
+            while j >= 0 && key < array[j] {
+                array[j+1] = array[j]
+                j -= 1
+            }
+            array[j+1] = key
         }
     }
     
@@ -83,6 +119,21 @@ class SortModel: ObservableObject {
             let _ = quickSort(array: &array, low: pivot + 1, high: high)
         }
         
+        return array
+    }
+    
+    func hybridSort(array: inout [Int], low: Int, high: Int) -> [Int] {
+        if high - low <= 1 { return array }
+        
+        if high - low < 25 {
+            insertionSort(array: &array, low: low, high: high)
+            return array
+        }
+        else if low < high {
+            let pivot = partition(array: &array, low: low, high: high)
+            let _ = hybridSort(array: &array, low: low, high: pivot - 1)
+            let _ = hybridSort(array: &array, low: pivot + 1, high: high)
+        }
         return array
     }
 }
